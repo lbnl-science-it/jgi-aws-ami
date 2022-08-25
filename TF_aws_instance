@@ -15,7 +15,8 @@ sudo -u ubuntu aws configure set region ${var.ec2_region}
 sudo -u ubuntu aws configure set aws_access_key_id ${var.key_id}
 sudo -u ubuntu aws configure set aws_secret_access_key ${var.access_key}
 ### ElasticBLAST Setup: https://blast.ncbi.nlm.nih.gov/doc/elastic-blast/quickstart-aws.html
-curl -H 'Authorization: token ${var.github_token}' -H 'Accept: application/vnd.github.v3.raw' -O  -L https://api.github.com/repos/fengchenLBL/aws_config/contents/BDQA.ini
+#curl -H 'Authorization: token ${var.github_token}' -H 'Accept: application/vnd.github.v3.raw' -O  -L https://api.github.com/repos/fengchenLBL/aws_config/contents/BDQA.ini
+curl -H 'Authorization: token ${var.github_token}' -H 'Accept: application/vnd.github.v3.raw' -O  -L https://api.github.com/repos/lbnl-science-it/jgi-aws-ami/contents/BDQA.ini
 export S3NAME=${var.s3name}
 export AWS_REGION=${var.ec2_region}
 sed -i "s/YOURNAME/$S3NAME/g" BDQA.ini 
