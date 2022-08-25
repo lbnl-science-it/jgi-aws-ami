@@ -1,0 +1,13 @@
+[cloud-provider]
+aws-region = YOURREGION
+
+[cluster]
+num-nodes = 1
+labels = owner=YOURNAME
+
+[blast]
+program = blastp
+db = swissprot
+queries = s3://elasticblast-test/queries/BDQA01.1.fsa_aa
+results = s3://elasticblast-YOURNAME/results/BDQA
+options = -task blastp-fast -evalue 0.01 -outfmt "7 std sskingdoms ssciname"
