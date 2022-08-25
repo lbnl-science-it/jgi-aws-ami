@@ -1,0 +1,31 @@
+#! /bin/bash
+sudo su ubuntu
+sudo apt update
+sudo apt install -y python3.8 python3.8-venv python3-distutils awscli
+cd /home/ubuntu
+mkdir jgi_workshop
+### Mount NVME-SSD:
+### Only for instance-type "c5ad.xlarge": 4-core cpu, 8-GB ram, 150-GB nvme-ssd, $0.1736/hr
+sudo mkfs -t ext4 /dev/nvme1n1
+sudo mount /dev/nvme1n1 jgi_workshop
+sudo chown -R ubuntu:ubuntu jgi_workshop
+cd jgi_workshop
+### AWS-CLI Setup:
+sudo -u ubuntu aws configure set region ${var.ec2_region}
+sudo -u ubuntu aws configure set aws_access_key_id ${var.key_id}
+sudo -u ubuntu aws configure set aws_secret_access_key ${var.access_key}
+### ElasticBLAST Setup: https://blast.ncbi.nlm.nih.gov/doc/elastic-blast/quickstart-aws.html
+curl -H 'Authorization: token ${var.github_token}' -H 'Accept: application/vnd.github.v3.raw' -O  -L https://api.github.com/repos/fengchenLBL/aws_config/contents/BDQA.ini
+export S3NAME=${var.s3name}
+export AWS_REGION=${var.ec2_region}
+sed -i "s/YOURNAME/$S3NAME/g" BDQA.ini 
+sed -i "s/YOURREGION/$AWS_REGION/g" BDQA.ini
+[ -d .elb-venv ] && rm -fr .elb-venv
+python3 -m venv .elb-venv
+source .elb-venv/bin/activate
+pip install wheel
+pip install elastic-blast==0.2.7
+pip install --upgrade requests==2.22.0
+echo "cd /home/ubuntu/jgi_workshop" >> /home/ubuntu/.bashrc
+echo "source /home/ubuntu/jgi_workshop/.elb-venv/bin/activate" >> /home/ubuntu/.bashrc
+sudo chown -R ubuntu:ubuntu /home/ubuntu 
